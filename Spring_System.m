@@ -57,7 +57,11 @@ for j = 1:1:5000
         
         c_2 = -v_imp*exp(2*alp_1)/(alp_2*(exp(2*alp_2) - exp(2*alp_1))); % Constant of Differentiation 2 (c_2)
         
-        a(i,j) = abs(alp_1^2*c_1*exp(alp_1*t(i)) + alp_2^2*c_2*exp(alp_2*t(i)));
+        x(i,j) = c_1*exp(alp_1*t(i)) + c_2*exp(alp_2*t(i)); % m - Position (Extension (+) , Compression (-))
+        
+        v(i,j) = alp_1*c_1*exp(alp_1*t(i)) + alp_2*c_2*exp(alp_2*t(i)); % m/s - Velocity
+        
+        a(i,j) = alp_1^2*c_1*exp(alp_1*t(i)) + alp_2^2*c_2*exp(alp_2*t(i)); % m/s^2 - Acceleration
         
         g(i,j) = a(i,j)/g_0;
         
@@ -70,14 +74,26 @@ end
 %% Plots
 
 figure()
-semilogy(t(1:5000),g(1:5000,5000));
+plot(t(1:5000),abs(x(1:5000,5000)));
+title('Position vs. Time');
+ylabel('Position [m]');
+xlabel('Time [s]');
+
+figure()
+plot(t(1:5000),abs(v(1:5000,5000)))
+title('Velocity vs. Time');
+ylabel('Velocity [m/s]');
+xlabel('Time [s]');
+
+figure()
+semilogy(t(1:5000),abs(g(1:5000,5000)));
 title('Acceleration vs. Time');
 ylabel('Acceleration [m/s^2]');
 xlabel('Time [s]');
 grid on
 
 figure()
-plot(t(1:5000),g(1:5000,5000));
+plot(t(1:5000),abs(g(1:5000,5000)));
 title('Acceleration vs. Time');
 ylabel('Acceleration [m/s^2]');
 xlabel('Time [s]');
