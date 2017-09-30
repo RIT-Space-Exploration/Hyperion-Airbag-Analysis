@@ -30,13 +30,13 @@ m = 4; % kg - Mass of system
 r = 100; % kg/s - Dampening coefficient
 
 i_n = 5000; % Number of Terms - 1
-s_min = 0.01; % Lower Bound
-s_max = 60; % Upper Bound
+s_min = 10; % Lower Bound
+s_max = 150; % Upper Bound
 n = (s_max-s_min)/i_n; % Iteration Step
 
 s = s_min:n:s_max; % kg/s^2 - Spring Coefficient
 
-%% Solution to Differential Eqn Constants
+%% Solution to Differential Eqn Roots
 alpha_1 = (-r+sqrt(r^2 - 4*m*s))/(2*m); % r_1
 
 alpha_2 = (-r-sqrt(r^2 - 4*m*s))/(2*m); % r_2
