@@ -21,17 +21,17 @@ clc
 clear
 
 %% Initial Conditions
-v_imp = 10; % m/s - Impact Velocity
-t_r = 0.75; % s - Time to rest (after impact)
+v_imp = 15; % m/s - Impact Velocity
+t_r = 0.015; % s - Time to rest (after impact)
 
 %% Constants
 g_0 = 9.8066; % m/s^2 - Standard Gravity
 m = 4; % kg - Mass of system
-r = 5000; % kg/s - Dampening coefficient
+r = 3000; % kg/s - Dampening coefficient
 
 i_n = 5000; % Number of Terms - 1
-s_min = 1.000; % Lower Bound
-s_max = 5000; % Upper Bound
+s_min = 1; % Lower Bound
+s_max = 4000; % Upper Bound
 n = (s_max-s_min)/i_n; % Iteration Step
 
 s = s_min:n:s_max; % kg/s^2 - Spring Coefficient
@@ -89,37 +89,37 @@ if sign >= 0
     ylabel('Position [m]');
     xlabel('Time [s]');
     
-    figure()
-    plot(t(1:5000),abs(x(1:5000,1)));
-    title('Position vs. Time - Min S');
-    ylabel('Position [m]');
-    xlabel('Time [s]');
-    
-    figure()
-    plot(t(1:5000),abs(v(1:5000,5000)))
-    title('Velocity vs. Time');
-    ylabel('Velocity [m/s]');
-    xlabel('Time [s]');
-    
-    figure()
-    plot(t(1:5000),abs(f(1:5000,1)));
-    title('Force vs. Time');
-    ylabel('Force [N]');
-    xlabel('Time [s]');
-    
-    figure()
-    semilogy(t(1:5000),abs(g(1:5000,5000)));
-    title('Acceleration vs. Time');
-    ylabel('Acceleration [m/s^2]');
-    xlabel('Time [s]');
-    grid on
-    
-    figure()
-    plot(t(1:5000),abs(g(1:5000,5000)));
-    title('Acceleration vs. Time');
-    ylabel('Acceleration [m/s^2]');
-    xlabel('Time [s]');
-    grid on
+%     figure()
+%     plot(t(1:5000),abs(x(1:5000,1)));
+%     title('Position vs. Time - Min S');
+%     ylabel('Position [m]');
+%     xlabel('Time [s]');
+%     
+%     figure()
+%     plot(t(1:5000),abs(v(1:5000,5000)))
+%     title('Velocity vs. Time');
+%     ylabel('Velocity [m/s]');
+%     xlabel('Time [s]');
+%     
+%     figure()
+%     plot(t(1:5000),abs(f(1:5000,1)));
+%     title('Force vs. Time');
+%     ylabel('Force [N]');
+%     xlabel('Time [s]');
+%     
+%     figure()
+%     semilogy(t(1:5000),abs(g(1:5000,5000)));
+%     title('Acceleration vs. Time');
+%     ylabel('Acceleration [m/s^2]');
+%     xlabel('Time [s]');
+%     grid on
+%     
+%     figure()
+%     plot(t(1:5000),abs(g(1:5000,5000)));
+%     title('Acceleration vs. Time');
+%     ylabel('Acceleration [m/s^2]');
+%     xlabel('Time [s]');
+%     grid on
     
 end
 
