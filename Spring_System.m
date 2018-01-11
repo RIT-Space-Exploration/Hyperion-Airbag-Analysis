@@ -21,146 +21,72 @@ clc
 clear
 
 %% Initial Conditions
-v_imp = 15; % m/s - Impact Velocity
-t_r = 0.015; % s - Time to rest (after impact)
+v_imp = 9; % m/s - Impact Velocity
 
 %% Constants
 g_0 = 9.8066; % m/s^2 - Standard Gravity
-m = 4; % kg - Mass of system
-r = 3000; % kg/s - Dampening coefficient
+mass = 4; % kg - Mass of system
+dampening_coefficient = 1; % kg/s - Dampening coefficient
+stiffness = 4; % kg/s^2
+angular_frequency = sqrt(stiffness/mass);
+sign = dampening_coefficient^2/(4*mass^2) - angular_frequency^2;
+relax_time = 2*mass/dampening_coefficient;
 
-i_n = 5000; % Number of Terms - 1
-s_min = 1; % Lower Bound
-s_max = 4000; % Upper Bound
-n = (s_max-s_min)/i_n; % Iteration Step
-
-s = s_min:n:s_max; % kg/s^2 - Spring Coefficient (stiffness)
-
-sign = r^2 - 4*m*s_max
-
-if sign < 0 
-    display('This creates a complex solution.');
+if sign > 0
+    disp('This creates a non-complex solution. Please fix the system constants so the sign is negative.');
 end
 
-if sign >= 0
-    
+if sign < 0
     %% Solution to Differential Eqn Roots
-    alpha_1 = (-r+sqrt(r^2 - 4*m*s))/(2*m); % r_1
+    alpha_1 = -dampening_coefficient/(2*mass)+1i*sqrt(angular_frequency^2-dampening_coefficient^2/(4*mass)); % r_1
     
-    alpha_2 = (-r-sqrt(r^2 - 4*m*s))/(2*m); % r_2
+    alpha_2 = -dampening_coefficient/(2*mass)-1i*sqrt(angular_frequency^2-dampening_coefficient^2/(4*mass)); % r_2
     
     %% Solution to Differential Equation
-    t(1) = 0;
+    %     t(1) = 0;
+    j = 1;
+    %     dt = 0.001; % s - Time step
+    %     x(1) = 0;
     
-    dt = (t_r - t(1))/i_n; % Iteration Step
-    
-    for j = 1:1:5000
+    for t = 0:0.001:20
+        c_1 = v_imp/(alpha_2-alpha_1); % Constant of Differentiation 1 (c_1)
         
-        alp_1 = alpha_1(j);
-        alp_2 = alpha_2(j);
+        c_2 = -v_imp/(alpha_2-alpha_1); % Constant of Differentiation 2 (c_2)
         
-        for i = 1:1:5000
-            
-            c_1 = v_imp*(1 + exp(t_r*alp_1))/(alp_1*alp_2*(exp(t_r*alp_2) - exp(t_r*alp_1))); % Constant of Differentiation 1 (c_1)
-            
-            c_2 = -v_imp*exp(t_r*alp_1)/(alp_2*(exp(t_r*alp_2) - exp(t_r*alp_1))); % Constant of Differentiation 2 (c_2)
-            
-            x(i,j) = c_1*exp(alp_1*t(i)) + c_2*exp(alp_2*t(i)); % m - Position (Extension (+) , Compression (-))
-            
-            v(i,j) = alp_1*c_1*exp(alp_1*t(i)) + alp_2*c_2*exp(alp_2*t(i)); % m/s - Velocity
-            
-            a(i,j) = alp_1^2*c_1*exp(alp_1*t(i)) + alp_2^2*c_2*exp(alp_2*t(i)); % m/s^2 - Acceleration
-            
-            f(i,j) = m*a(i,j); % Force
-            
-            g(i,j) = a(i,j)/g_0; % G-Force
-            
-            t(i+1) = t(i) + dt;
-            
-        end
+        x(j) = c_1*exp(alpha_1*t) + c_2*exp(alpha_2*t); % m - Position (Extension (+) , Compression (-))
         
+        v(j) = alpha_1*c_1*exp(alpha_1*t) + alpha_2*c_2*exp(alpha_2*t); % m/s - Velocity
+        
+        a(j) = alpha_1^2*c_1*exp(alpha_1*t) + alpha_2^2*c_2*exp(alpha_2*t); % m/s^2 - Acceleration
+        
+        f(j) = mass*a(j); % Force
+        
+        g(j) = a(j)/g_0; % G-Force
+        
+        j = j + 1;
     end
     
+    t = 0:0.001:20;
+    
     %% Plots
+    grid on
     
     figure()
-    plot(t(1:5000),abs(x(1:5000,5000)));
-    title('Position vs. Time - Max S');
+    plot(t,x);
+    title('Position vs. Time');
     ylabel('Position [m]');
     xlabel('Time [s]');
     
-%     figure()
-%     plot(t(1:5000),abs(x(1:5000,1)));
-%     title('Position vs. Time - Min S');
-%     ylabel('Position [m]');
-%     xlabel('Time [s]');
-%     
-%     figure()
-%     plot(t(1:5000),abs(v(1:5000,5000)))
-%     title('Velocity vs. Time');
-%     ylabel('Velocity [m/s]');
-%     xlabel('Time [s]');
-%     
-%     figure()
-%     plot(t(1:5000),abs(f(1:5000,1)));
-%     title('Force vs. Time');
-%     ylabel('Force [N]');
-%     xlabel('Time [s]');
-%     
-%     figure()
-%     semilogy(t(1:5000),abs(g(1:5000,5000)));
-%     title('Acceleration vs. Time');
-%     ylabel('Acceleration [m/s^2]');
-%     xlabel('Time [s]');
-%     grid on
-%     
-%     figure()
-%     plot(t(1:5000),abs(g(1:5000,5000)));
-%     title('Acceleration vs. Time');
-%     ylabel('Acceleration [m/s^2]');
-%     xlabel('Time [s]');
-%     grid on
+    figure()
+    plot(t,v);
+    title('Velocity vs. Time');
+    ylabel('Velocity [m/s]');
+    xlabel('Time [s]');
+    
+    figure()
+    plot(t,a);
+    title('Acceleration vs. Time');
+    ylabel('Acceleration [m/s^2]');
+    xlabel('Time [s]');
     
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
